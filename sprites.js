@@ -1,4 +1,4 @@
-function Sprite(x, y, largura, altura) {
+function Sprite(x, y, largura, altura) { 
     this.x = x;
     this.y = y;
     this.largura = largura;
@@ -6,8 +6,8 @@ function Sprite(x, y, largura, altura) {
 
     this.desenha = function(xCanvas, yCanvas) {
         ctx.drawImage(img, this.x, this.y, this.largura, this.altura, xCanvas, yCanvas, this.largura, this.altura);
-    }
+    } // desenhar dentro do canvas
 }
 
-var bg = new Sprite(0, 0, 600, 600),
-spriteBoneco = new Sprite(618, 16, 87, 87);
+var bgImage = new Sprite(0, 0, 600, 575);
+spriteBoneco = new Sprite(600, 0, 50, 55);

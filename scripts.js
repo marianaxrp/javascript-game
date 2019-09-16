@@ -3,7 +3,7 @@ var canvas, ctx, ALTURA, LARGURA, frames = 0,
     velocidade = 6,
     estadoAtual,
     record,
-    img,
+    /* img, */
 
 
     estados = {
@@ -27,8 +27,8 @@ var canvas, ctx, ALTURA, LARGURA, frames = 0,
     bloco = {
         x: 50,
         y: 0,
-        altura: 50,
-        largura: 50,
+        altura: spriteBoneco.altura,
+        largura: spriteBoneco.largura,
         cor: "#ff9239",
         gravidade: 1.6,
         velocidade: 0,
@@ -55,7 +55,7 @@ var canvas, ctx, ALTURA, LARGURA, frames = 0,
 
         },
 
-        reset: function() {
+        reset: function () {
             this.velocidade = 0;
             this.y = 0;
 
@@ -68,8 +68,7 @@ var canvas, ctx, ALTURA, LARGURA, frames = 0,
         },
 
         desenha: function () {
-            ctx.fillStyle = this.cor;
-            ctx.fillRect(this.x, this.y, this.largura, this.altura);
+            spriteBoneco.desenha(this.x, this.y);
         }
     },
 
@@ -103,14 +102,10 @@ var canvas, ctx, ALTURA, LARGURA, frames = 0,
                 obs.x -= velocidade;
 
                 if (bloco.x < obs.x + obs.largura && bloco.x + bloco.largura >= obs.x && bloco.y + bloco.altura >= chao.y - obs.altura) {
-                    estadoAtual = estados.perdeu;                    
-                }
-
-                else if (obs.x == 0) {
+                    estadoAtual = estados.perdeu;
+                } else if (obs.x == 0) {
                     bloco.score++;
-                }
-
-                else if (obs.x <= -obs.largura) {
+                } else if (obs.x <= -obs.largura) {
                     this._obs.splice(i, 1);
                     tam--;
                     i--;
@@ -118,7 +113,7 @@ var canvas, ctx, ALTURA, LARGURA, frames = 0,
             }
         },
 
-        limpa: function() {
+        limpa: function () {
             this._obs = [];
         },
 
@@ -136,18 +131,14 @@ function clique(event) {
     if (estadoAtual == estados.jogando) {
         bloco.pula();
 
-    } 
-    
-    else if (estadoAtual == estados.jogar) {
+    } else if (estadoAtual == estados.jogar) {
         estadoAtual = estados.jogando;
-    } 
-    
-    else if (estadoAtual == estados.perdeu && bloco.y >= 2 * ALTURA) {
+    } else if (estadoAtual == estados.perdeu && bloco.y >= 2 * ALTURA) {
         estadoAtual = estados.jogar;
         obstaculos.limpa();
         bloco.reset();
-    } 
- 
+    }
+
 }
 
 function main() {
@@ -155,7 +146,7 @@ function main() {
     LARGURA = window.innerWidth // largura da janela do usuário
 
     if (LARGURA >= 500) {
-        LARGURA = 600;
+        LARGURA = 590;
         ALTURA = 600;
     }
 
@@ -164,7 +155,7 @@ function main() {
     canvas.height = ALTURA;
     canvas.style.border = "1px solid #000";
 
-    ctx = canvas.getContext("2d"); 
+    ctx = canvas.getContext("2d");
     document.body.appendChild(canvas);
 
     document.addEventListener("mousedown", clique); // escutar o evento de click
@@ -177,7 +168,7 @@ function main() {
     }
 
     img = new Image();
-    img.src = "img/bg-2.png";
+    img.src = "img/bg2.png";
 
     roda();
 }
@@ -195,14 +186,15 @@ function atualiza() {
 
     if (estadoAtual == estados.jogando) {
         obstaculos.atualiza();
-    } 
+    }
 }
 
 function desenha() {
     /* ctx.fillStyle = "#50beff";
     ctx.fillRect(0, 0, LARGURA, ALTURA); */
 
-    bg.desenha(0, 0);
+    bgImage.desenha(0, 0);
+
 
     ctx.fillStyle = "#fff";
     ctx.font = "50px Arial";
@@ -211,50 +203,36 @@ function desenha() {
     if (estadoAtual == estados.jogar) {
         ctx.fillStyle = "green";
         ctx.fillRect(LARGURA / 2 - 50, ALTURA / 2 - 50, 100, 100, );
-    } 
-    
-    else if (estadoAtual == estados.perdeu) {
+    } else if (estadoAtual == estados.perdeu) {
         ctx.fillStyle = "red";
         ctx.fillRect(LARGURA / 2 - 50, ALTURA / 2 - 50, 100, 100, );
-        
+
         ctx.save(); // "salva" o canvas como é atualmente
         ctx.translate(LARGURA / 2, ALTURA / 2); // transporta o canto 0, 0 para o meio da tela
         ctx.fillStyle = "#fff";
 
         if (bloco.score > record) {
             ctx.fillText("Novo Record!", -150, -65);
-        } 
-        
-        else if (record < 10) {
+        } else if (record < 10) {
             ctx.fillText("Record " + record, -99, -65);
-        }
-        
-        else if (record >= 10 && record < 100) {
+        } else if (record >= 10 && record < 100) {
             ctx.fillText("Record " + record, -112, -65);
-        }
-        
-        else {
+        } else {
             ctx.fillText("Record " + record, -125, -65);
         }
 
 
         if (bloco.score < 10) {
             ctx.fillText(bloco.score, -13, 19);
-        } 
-        
-        else if (bloco.score >= 10 && bloco.score < 100) {
+        } else if (bloco.score >= 10 && bloco.score < 100) {
             ctx.fillText(bloco.score, -26, 19);
-        } 
-        
-        else {
+        } else {
             ctx.fillText(bloco.score, -39, 19);
         }
-        
 
         ctx.restore();
-    } 
-    
-    else if (estadoAtual == estados.jogando) {
+
+    } else if (estadoAtual == estados.jogando) {
         obstaculos.desenha();
     }
 
