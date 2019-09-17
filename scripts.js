@@ -1,9 +1,9 @@
-var canvas, ctx, ALTURA, LARGURA, frames = 0,
+var canvas, ctx, ALTURA, LARGURA,
     maxPulos = 3,
     velocidade = 6,
     estadoAtual,
     record,
-    /* img, */
+    img,
 
 
     estados = {
@@ -14,12 +14,19 @@ var canvas, ctx, ALTURA, LARGURA, frames = 0,
 
     chao = {
         y: 550,
+        x: 0,
         altura: 50,
-        cor: "#ffdf70",
+
+        atualiza: function () {
+            this.x -= velocidade;
+            if (this.x <= -30) {
+                this.x = 0;
+            }
+        },
 
         desenha: function () {
-            ctx.fillStyle = this.cor;
-            ctx.fillRect(0, this.y, LARGURA, this.altura);
+            spriteChao.desenha(this.x, this.y);
+            spriteChao.desenha(this.x + spriteChao.largura, this.y);
         }
 
     },
@@ -29,16 +36,17 @@ var canvas, ctx, ALTURA, LARGURA, frames = 0,
         y: 0,
         altura: spriteBoneco.altura,
         largura: spriteBoneco.largura,
-        cor: "#ff9239",
         gravidade: 1.6,
         velocidade: 0,
         forcaDoPulo: 23.6,
         qntPulos: 0,
         score: 0,
+        rotacao: 0,
 
         atualiza: function () {
             this.velocidade += this.gravidade;
             this.y += this.velocidade;
+            /* this.rotacao += Math.PI / 180 * velocidade; */
 
             if (this.y > chao.y - this.altura && estadoAtual != estados.perdeu) {
                 this.y = chao.y - this.altura;
@@ -52,7 +60,6 @@ var canvas, ctx, ALTURA, LARGURA, frames = 0,
                 this.velocidade = -this.forcaDoPulo;
                 this.qntPulos++;
             }
-
         },
 
         reset: function () {
@@ -68,7 +75,12 @@ var canvas, ctx, ALTURA, LARGURA, frames = 0,
         },
 
         desenha: function () {
-            spriteBoneco.desenha(this.x, this.y);
+            ctx.save();
+            ctx.translate(this.x + this.largura / 2, this.y + this.altura / 2);
+            ctx.rotate(this.rotacao);
+            spriteBoneco.desenha(-this.largura / 2, -this.altura / 2);
+            // operacoes para rotacionar
+            ctx.restore();
         }
     },
 
@@ -138,7 +150,6 @@ function clique(event) {
         obstaculos.limpa();
         bloco.reset();
     }
-
 }
 
 function main() {
@@ -168,7 +179,7 @@ function main() {
     }
 
     img = new Image();
-    img.src = "img/bg2.png";
+    img.src = "img/bg3.png";
 
     roda();
 }
@@ -181,12 +192,16 @@ function roda() {
 }
 
 function atualiza() {
-    frames++;
+    chao.atualiza();
     bloco.atualiza();
 
     if (estadoAtual == estados.jogando) {
         obstaculos.atualiza();
+
+
     }
+
+
 }
 
 function desenha() {
